@@ -1,0 +1,73 @@
+{% extends "admin/basa.html" %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+```
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-danger text-white text-center">
+                <h4>Reject Room Booking</h4>
+            </div>
+
+            <div class="card-body">
+
+                <h5>Customer: {{ booking.name }}</h5>
+
+                <p>
+                    <b>Room Type:</b>
+                    {{ booking.room_type }}
+                </p>
+
+                <p>
+                    <b>Email:</b>
+                    {{ booking.email }}
+                </p>
+
+                <form action="{% url 'reject_booking_submit' booking.id %}"
+                      method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            <b>Reason for Rejection</b>
+                        </label>
+
+                        <textarea
+                            name="reason"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Enter rejection reason..."
+                            required>
+                        </textarea>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-danger w-100">
+
+                        Reject Booking & Send Email
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock body %}

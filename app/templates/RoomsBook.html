@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+<style>
+body {
+    background: #f8f9fa;
+}
+
+/* ================= SEARCH ================= */
+.search-box {
+    border-radius: 16px;
+}
+
+/* ================= ROOM CARD ================= */
+.room-card {
+    transition: all 0.3s ease;
+    border-radius: 14px;
+    overflow: hidden;
+    border: none;
+}
+
+.room-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ================= IMAGE ================= */
+.card-img-top {
+    height: 220px;
+    object-fit: cover;
+}
+
+/* ================= ROOM TITLE ================= */
+.room-title {
+    text-transform: capitalize;
+    font-weight: 700;
+    color: #212529;
+}
+
+/* ================= ROOM NUMBER ================= */
+.room-number {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+/* ================= AVAILABLE ================= */
+.available-badge {
+    display: inline-block;
+    background: #d1e7dd;
+    color: #0f5132;
+    padding: 7px 15px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ================= BOOKED ================= */
+.unavailable-badge {
+    display: inline-block;
+    background: #f8d7da;
+    color: #842029;
+    padding: 7px 15px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ================= BOOKING INFO ================= */
+.booking-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    color: #555;
+}
+
+/* ================= MEDIA QUERIES ================= */
+@media(max-width: 768px) {
+    .card-img-top {
+        height: 180px;
+    }
+    .search-form {
+        flex-direction: column;
+    }
+    .search-form button {
+        width: 100%;
+    }
+}
+
+@media(max-width: 576px) {
+    .card-img-top {
+        height: 160px;
+    }
+    h2 {
+        font-size: 22px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+}
+</style>
+
+<br>
+<br>
+<br>
+<br>
+
+<!-- ===================================================== -->
+<!-- SEARCH SECTION -->
+<!-- ===================================================== -->
+<div class="container my-4 pt-0 mt-2 border rounded-top">
+    <div class="row align-items-center bg-white p-4 rounded-5 shadow-sm search-box">
+        <div class="col-lg-5 mb-3 mb-lg-0">
+            <h3 class="mb-0 text-primary">
+                Search Your Rooms Here...
+            </h3>
+            <small class="text-muted">
+                Find your perfect room
+            </small>
+        </div>
+
+        <div class="col-lg-7">
+            <form method="GET" class="d-flex search-form gap-2">
+                <input
+                    type="search"
+                    class="form-control form-control-lg"
+                    placeholder="Search Single, Double, Suite, Deluxe..."
+                    name="srch"
+                    value="{{ search_query }}"
+                >
+                <button type="submit" class="btn btn-primary btn-lg px-4">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===================================================== -->
+<!-- DOUBLE ROOMS -->
+<!-- ===================================================== -->
+<div class="container mb-5">
+    <h2 class="text-center bg-white border rounded-3 p-3 mb-4 shadow-sm">
+        Double Rooms
+    </h2>
+
+    <div class="row g-4">
+        {% for i in data %}
+            {% if "double" in i.Roomtype|lower %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card room-card h-100 shadow-sm">
+
+                        <!-- ROOM IMAGE -->
+                        {% if i.image %}
+                            <img src="{{ i.image.url }}" class="card-img-top" alt="{{ i.Roomtype }}">
+                        {% else %}
+                            <img src="{% static 'images/default-room.jpg' %}" class="card-img-top" alt="Default Room">
+                        {% endif %}
+
+                        <!-- CARD BODY -->
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="room-title mb-2">{{ i.Roomtype }}</h5>
+                            <p class="room-number">
+                                Room Number: <strong>{{ i.room_number }}</strong><br>
+                                Par Persons Price: <strong>{{ i.Price }}</strong>
+                            </p>
+
+                            <!-- AVAILABILITY CHECK -->
+                            {% if i.is_available %}
+                                <div class="mb-3">
+                                    <span class="available-badge">✓ AVAILABLE</span>
+                                </div>
+                                <div class="mt-auto d-grid">
+                                    <a href="{% url 'Room_Bookd' %}?room={{ i.id }}" class="btn btn-success">
+                                        Book Now
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="mb-3">
+                                    <span class="unavailable-badge">✕ BOOKED</span>
+                                </div>
+
+                                {% if i.current_booking %}
+                                    <div class="booking-info mb-3">
+                                        <div><strong>Check-in:</strong> {{ i.current_booking.checkin }}</div>
+                                        <div><strong>Check-out:</strong> {{ i.current_booking.checkout }}</div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="mt-auto d-grid">
+                                    <button class="btn btn-danger" disabled>
+                                        Room is Booked
+                                    </button>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- ===================================================== -->
+<!-- SINGLE ROOMS -->
+<!-- ===================================================== -->
+<div class="container mb-5">
+    <h2 class="text-center bg-white border rounded-3 p-3 mb-4 shadow-sm">
+        Single Rooms
+    </h2>
+
+    <div class="row g-4">
+        {% for i in data %}
+            {% if "single" in i.Roomtype|lower %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card room-card h-100 shadow-sm">
+
+                        {% if i.image %}
+                            <img src="{{ i.image.url }}" class="card-img-top" alt="{{ i.Roomtype }}">
+                        {% else %}
+                            <img src="{% static 'images/default-room.jpg' %}" class="card-img-top" alt="Default Room">
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="room-title mb-2">{{ i.Roomtype }}</h5>
+                            <p class="room-number">
+                                Room Number: <strong>{{ i.room_number }}</strong><br>
+                                Par Persons Price: <strong>{{ i.Price }}</strong>
+                            </p>
+
+                            {% if i.is_available %}
+                                <div class="mb-3">
+                                    <span class="available-badge">✓ AVAILABLE</span>
+                                </div>
+                                <div class="mt-auto d-grid">
+                                    <a href="{% url 'Room_Bookd' %}?room={{ i.id }}" class="btn btn-success">
+                                        Book Now
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="mb-3">
+                                    <span class="unavailable-badge">✕ BOOKED</span>
+                                </div>
+
+                                {% if i.current_booking %}
+                                    <div class="booking-info mb-3">
+                                        <div><strong>Check-in:</strong> {{ i.current_booking.checkin }}</div>
+                                        <div><strong>Check-out:</strong> {{ i.current_booking.checkout }}</div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="mt-auto d-grid">
+                                    <button class="btn btn-danger" disabled>
+                                        Room is Booked
+                                    </button>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- ===================================================== -->
+<!-- SUITE ROOMS -->
+<!-- ===================================================== -->
+<div class="container mb-5">
+    <h2 class="text-center bg-white border rounded-3 p-3 mb-4 shadow-sm">
+        Suite Rooms
+    </h2>
+
+    <div class="row g-4">
+        {% for i in data %}
+            {% if "suite" in i.Roomtype|lower %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card room-card h-100 shadow-sm">
+
+                        {% if i.image %}
+                            <img src="{{ i.image.url }}" class="card-img-top" alt="{{ i.Roomtype }}">
+                        {% else %}
+                            <img src="{% static 'images/default-room.jpg' %}" class="card-img-top" alt="Default Room">
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="room-title mb-2">{{ i.Roomtype }}</h5>
+                            <p class="room-number">
+                                Room Number: <strong>{{ i.room_number }}</strong><br>
+                                Par Persons Price: <strong>{{ i.Price }}</strong>
+                            </p>
+
+                            {% if i.is_available %}
+                                <div class="mb-3">
+                                    <span class="available-badge">✓ AVAILABLE</span>
+                                </div>
+                                <div class="mt-auto d-grid">
+                                    <a href="{% url 'Room_Bookd' %}?room={{ i.id }}" class="btn btn-success">
+                                        Book Now
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="mb-3">
+                                    <span class="unavailable-badge">✕ BOOKED</span>
+                                </div>
+
+                                {% if i.current_booking %}
+                                    <div class="booking-info mb-3">
+                                        <div><strong>Check-in:</strong> {{ i.current_booking.checkin }}</div>
+                                        <div><strong>Check-out:</strong> {{ i.current_booking.checkout }}</div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="mt-auto d-grid">
+                                    <button class="btn btn-danger" disabled>
+                                        Room is Booked
+                                    </button>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- ===================================================== -->
+<!-- DELUXE ROOMS -->
+<!-- ===================================================== -->
+<div class="container mb-5">
+    <h2 class="text-center bg-white border rounded-3 p-3 mb-4 shadow-sm">
+        Deluxe Rooms
+    </h2>
+
+    <div class="row g-4">
+        {% for i in data %}
+            {% if "deluxe" in i.Roomtype|lower %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card room-card h-100 shadow-sm">
+
+                        {% if i.image %}
+                            <img src="{{ i.image.url }}" class="card-img-top" alt="{{ i.Roomtype }}">
+                        {% else %}
+                            <img src="{% static 'images/default-room.jpg' %}" class="card-img-top" alt="Default Room">
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="room-title mb-2">{{ i.Roomtype }}</h5>
+                            <p class="room-number">
+                                Room Number: <strong>{{ i.room_number }}</strong><br>
+                                Par Persons Price: <strong>{{ i.Price }}</strong>
+                            </p>
+
+                            {% if i.is_available %}
+                                <div class="mb-3">
+                                    <span class="available-badge">✓ AVAILABLE</span>
+                                </div>
+                                <div class="mt-auto d-grid">
+                                    <a href="{% url 'Room_Bookd' %}?room={{ i.id }}" class="btn btn-success">
+                                        Book Now
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="mb-3">
+                                    <span class="unavailable-badge">✕ BOOKED</span>
+                                </div>
+
+                                {% if i.current_booking %}
+                                    <div class="booking-info mb-3">
+                                        <div><strong>Check-in:</strong> {{ i.current_booking.checkin }}</div>
+                                        <div><strong>Check-out:</strong> {{ i.current_booking.checkout }}</div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="mt-auto d-grid">
+                                    <button class="btn btn-danger" disabled>
+                                        Room is Booked
+                                    </button>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "admin/basa.html"%}
+
+<html>
+<head>
+</head>
+<body>
+{% block body %}
+
+    <h3 class="mt-2 pt-1 mb-5 text-center border border-dark">Gustes Countings </h3>
+    <div class="container-fluid">
+        <div class="row g-3">
+            {% for i in data %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5><b>name :</b> {{ i.name }}</h5>
+                        <p><b>Number : </b>{{ i.number }}</p>
+                        <p><b>E-mail : </b>{{ i.email }}</p>        
+                        <p><b>Address : </b>{{ i.address }}</p>
+                        <p><b>Disease : </b>{{ i.disease }}</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a  class="btn btn-danger"  href="{% url 'del_Patient' i.id %}" 
+                            onclick="return confirm('Are you sure?')">Delete</a>
+                            <a class="btn btn-primary" href="{%  url 'edit_Patient' i.id %}">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock body %}
+  </body>
+</html>

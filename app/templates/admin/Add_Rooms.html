@@ -1,0 +1,107 @@
+{% extends 'admin/basa.html' %}
+
+{% block body %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card shadow border-0 rounded-3">
+
+                <!-- HEADER -->
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h4 class="mb-0 fw-bold">ADD ROOM DETAILS</h4>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <!-- FORM -->
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- BASIC INFORMATION -->
+                        <div class="bg-white p-3 rounded border mb-3 shadow-sm">
+                            <h6 class="text-primary fw-bold mb-3">Room Information</h6>
+
+                            <div class="row g-3">
+
+                                <!-- ROOM NUMBER -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Room Number</label>
+                                    <input type="text" class="form-control" name="room_number" placeholder="Example: 101" required>
+                                </div>
+
+                                <!-- ROOM TYPE -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Room Type</label>
+                                    <select class="form-select" name="Roomtype" required>
+                                        <option value="" selected disabled>Select Type...</option>
+                                        <option value="single">Single</option>
+                                        <option value="double">Double</option>
+                                        <option value="suite">Suite</option>
+                                        <option value="deluxe">Deluxe</option>
+                                    </select>
+                                </div>
+
+                                <!-- PRICE PER NIGHT (NEW FIELD) -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Price Per Night (₹)</label>
+                                    <input type="number" step="0.01" class="form-control" name="Price" placeholder="Example: 1500" required>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-3 rounded border mb-3 shadow-sm">
+                            <h6 class="text-primary fw-bold mb-3">Room Facilities</h6>
+
+                            <textarea
+                                class="form-control"
+                                name="facilities"
+                                rows="4"
+                                placeholder="Example: AC, Free WiFi, Smart TV, King Size Bed, Attached Bathroom"
+                            ></textarea>
+
+                            <small class="text-muted">
+                                Enter facilities separated by commas.
+                            </small>
+                        </div>
+
+                        <!-- IMAGES -->
+                        <div class="bg-white p-3 rounded border mb-3 shadow-sm">
+                            <h6 class="text-primary fw-bold mb-3">Room Gallery</h6>
+
+                            <div class="row g-3">
+                                <!-- IMAGE 1 -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Main Image</label>
+                                    <input class="form-control" type="file" name="image" accept="image/*" required>
+                                </div>
+
+                                <!-- IMAGE 2 -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Image 2</label>
+                                    <input class="form-control" type="file" name="image2" accept="image/*">
+                                </div>
+
+                                <!-- IMAGE 3 -->
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Image 3</label>
+                                    <input class="form-control" type="file" name="image3" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SUBMIT -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">Save Room Details</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

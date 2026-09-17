@@ -1,0 +1,1807 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<style>
+    .car-service-wrapper {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .booking-card {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .booking-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .booking-title h2 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .booking-title p {
+        color: #777;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .place-box {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: 0.2s;
+    }
+
+    .place-box:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .place-box label {
+        cursor: pointer;
+        margin-left: 8px;
+        font-weight: 500;
+    }
+
+    .summary-box {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .summary-row:last-child {
+        border-bottom: none;
+    }
+
+    .total-row {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .otp-box {
+        background: #fff8e1;
+        border: 1px solid #ffe082;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 15px;
+    }
+
+    .payment-box {
+        text-align: center;
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 25px;
+    }
+
+    .payment-box img {
+        max-width: 250px;
+        width: 100%;
+        border: 1px solid #ddd;
+        padding: 10px;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .success-box {
+        background: #e8f5e9;
+        border: 1px solid #81c784;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .success-icon {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    .booking-details {
+        text-align: left;
+        max-width: 650px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .detail-row strong {
+        color: #333;
+    }
+
+    @media (max-width: 768px) {
+        .car-service-wrapper {
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .booking-card {
+            padding: 20px;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 3px;
+        }
+    }
+</style>
+<br>
+<br>
+<br>
+<div class="car-service-wrapper mt-5 pt-5 border border-4 rounded-top">
+ 
+<!-- ================================================= -->
+<!-- BACKEND ERROR -->
+<!-- ================================================= -->
+
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+    ❌ {{ error_message }}
+</div>
+{% endif %}
+
+
+<!-- ================================================= -->
+<!-- SUCCESS MESSAGE -->
+<!-- ================================================= -->
+
+{% if success_booking %}
+
+<div class="success-box">
+
+    <div class="success-icon">
+        ✅
+    </div>
+
+    <h2>
+        Car Booking Successful!
+    </h2>
+
+    <p>
+        Your car booking and payment have been confirmed.
+    </p>
+
+
+    <div class="booking-details">
+
+        <div class="detail-row">
+            <strong>Booking ID</strong>
+            <span>
+                #{{ success_booking.id }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Room Number</strong>
+            <span>
+                {{ success_booking.room_number }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Name</strong>
+            <span>
+                {{ success_booking.full_name }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Mobile Number</strong>
+            <span>
+                {{ success_booking.phone_number }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Car Capacity</strong>
+            <span>
+                {{ success_booking.car_capacity }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Booking Date</strong>
+            <span>
+                {{ success_booking.booking_date }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Booking Time</strong>
+            <span>
+                {{ success_booking.booking_time }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Selected Places</strong>
+            <span>
+                {{ success_booking.selected_places }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Estimated KM</strong>
+            <span>
+                {{ success_booking.estimated_km }} KM
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Total Amount</strong>
+            <span>
+                ₹{{ success_booking.total_amount }}
+            </span>
+        </div>
+
+        <div class="detail-row">
+
+            <strong>
+                Payment Status
+            </strong>
+
+            <span class="text-success">
+
+                {% if success_booking.is_paid %}
+                    PAID
+                {% else %}
+                    PENDING
+                {% endif %}
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <p class="mt-3">
+        📧 Booking confirmation email has been sent
+        to your registered room-booking email.
+    </p>
+
+
+    <a
+        href="{% url 'car_service' %}"
+        class="btn btn-primary mt-3"
+    >
+        🚗 Book Another Ride
+    </a>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- ================================================= -->
+<!-- PAYMENT QR -->
+<!-- ================================================= -->
+
+{% if show_qr and booking %}
+
+<div class="booking-card">
+
+    <div class="booking-title">
+
+        <h2>
+            💳 Complete Payment
+        </h2>
+
+        <p>
+            Scan the QR code and complete your payment.
+        </p>
+
+    </div>
+
+
+    <div class="payment-box">
+
+        <h4>
+            Amount to Pay
+        </h4>
+
+        <h2 class="text-success mb-4">
+            ₹{{ booking.total_amount }}
+        </h2>
+
+
+        <!-- ================================================= -->
+        <!-- QR CODE -->
+        <!-- ================================================= -->
+
+        <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&amp;data=HotelCarBooking{{ booking.id }}"
+            alt="Payment QR Code"
+        >
+
+
+        <p class="mt-3 text-muted">
+            Scan this QR code using your UPI application.
+        </p>
+
+
+        <p>
+            <strong>
+                Booking ID:
+            </strong>
+
+            #{{ booking.id }}
+        </p>
+
+
+        <!-- ================================================= -->
+        <!-- PAYMENT CONFIRM FORM -->
+        <!-- ================================================= -->
+
+        <form
+            method="POST"
+            class="mt-4"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action_type"
+                value="pay_confirm"
+            >
+
+            <input
+                type="hidden"
+                name="booking_id"
+                value="{{ booking.id }}"
+            >
+
+
+            <button
+                type="submit"
+                class="btn btn-success btn-lg w-100"
+                onclick="return confirmPayment();"
+            >
+                ✅ I Have Completed Payment
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- ================================================= -->
+<!-- MAIN BOOKING FORM -->
+<!-- ================================================= -->
+
+{% if not show_qr and not success_booking %}
+
+<div class="booking-card">
+
+    <div class="booking-title">
+
+        <h2>
+            🚗 Ahmedabad Car Service
+        </h2>
+
+        <p>
+            Book a car for Ahmedabad sightseeing.
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BOOKING FORM -->
+    <!-- ================================================= -->
+
+    <form
+        method="POST"
+        id="carBookingForm"
+    >
+
+        {% csrf_token %}
+
+
+        <input
+            type="hidden"
+            name="action_type"
+            value="book"
+        >
+
+
+        <!-- ================================================= -->
+        <!-- ROOM NUMBER -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                class="form-label"
+                for="roomNumber"
+            >
+                🏨 Room Number
+            </label>
+
+            <input
+                type="text"
+                name="room_number"
+                id="roomNumber"
+                class="form-control"
+                placeholder="e.g. 104"
+                required
+            >
+
+            <small class="text-muted">
+                Enter the room number used for your
+                hotel booking.
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- FULL NAME -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                class="form-label"
+                for="fullName"
+            >
+                👤 Guest Name
+            </label>
+
+            <input
+                type="text"
+                name="full_name"
+                id="fullName"
+                class="form-control"
+                placeholder="Enter your full name"
+                required
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CAR CAPACITY -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                class="form-label"
+                for="carCapacity"
+            >
+                🚘 Car Capacity
+            </label>
+
+            <select
+                name="car_capacity"
+                id="carCapacity"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Select car capacity
+                </option>
+
+                <option value="4">
+                    4 Seater
+                </option>
+
+                <option value="5">
+                    5 Seater
+                </option>
+
+                <option value="6">
+                    6 Seater
+                </option>
+
+                <option value="7">
+                    7 Seater
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- BOOKING DATE -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                class="form-label"
+                for="bookingDate"
+            >
+                📅 Booking Date
+            </label>
+
+            <input
+                type="date"
+                name="booking_date"
+                id="bookingDate"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- BOOKING TIME -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                class="form-label"
+                for="bookingTime"
+            >
+                ⏰ Booking Time
+            </label>
+
+            <input
+                type="time"
+                name="booking_time"
+                id="bookingTime"
+                class="form-control"
+                required
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- AHMEDABAD PLACES -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                📍 Select Ahmedabad Sightseeing Places
+            </label>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Sabarmati Ashram"
+                    data-km="8"
+                    id="place1"
+                >
+
+                <label for="place1">
+                    Sabarmati Ashram
+                    <span class="text-muted">
+                        (~8 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Kankaria Lake"
+                    data-km="10"
+                    id="place2"
+                >
+
+                <label for="place2">
+                    Kankaria Lake
+                    <span class="text-muted">
+                        (~10 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Adalaj Stepwell"
+                    data-km="18"
+                    id="place3"
+                >
+
+                <label for="place3">
+                    Adalaj Stepwell
+                    <span class="text-muted">
+                        (~18 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Akshardham Temple"
+                    data-km="30"
+                    id="place4"
+                >
+
+                <label for="place4">
+                    Akshardham Temple
+                    <span class="text-muted">
+                        (~30 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Science City"
+                    data-km="15"
+                    id="place5"
+                >
+
+                <label for="place5">
+                    Science City
+                    <span class="text-muted">
+                        (~15 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Sabarmati Riverfront"
+                    data-km="7"
+                    id="place6"
+                >
+
+                <label for="place6">
+                    Sabarmati Riverfront
+                    <span class="text-muted">
+                        (~7 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Sidi Saiyyed Mosque"
+                    data-km="6"
+                    id="place7"
+                >
+
+                <label for="place7">
+                    Sidi Saiyyed Mosque
+                    <span class="text-muted">
+                        (~6 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <div class="place-box">
+
+                <input
+                    type="checkbox"
+                    class="place-checkbox"
+                    value="Hutheesing Jain Temple"
+                    data-km="5"
+                    id="place8"
+                >
+
+                <label for="place8">
+                    Hutheesing Jain Temple
+                    <span class="text-muted">
+                        (~5 KM)
+                    </span>
+                </label>
+
+            </div>
+
+
+            <input
+                type="hidden"
+                name="selected_places_hidden"
+                id="selectedPlacesHidden"
+            >
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- MOBILE NUMBER -->
+        <!-- ================================================= -->
+
+        <div class="mb-3">
+
+            <label
+                class="form-label"
+                for="phoneNumber"
+            >
+                📱 Registered Mobile Number
+            </label>
+
+
+            <div class="input-group">
+
+                <input
+                    type="tel"
+                    name="phone_number"
+                    id="phoneNumber"
+                    class="form-control"
+                    placeholder="10 digit number"
+                    maxlength="10"
+                    inputmode="numeric"
+                    required
+                >
+
+
+                <button
+                    type="button"
+                    id="sendOtpBtn"
+                    class="btn btn-warning"
+                >
+                    📱 Send OTP
+                </button>
+
+            </div>
+
+
+            <small class="text-muted">
+                Mobile number must match the number
+                used in your room booking.
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- OTP -->
+        <!-- ================================================= -->
+
+        <div class="otp-box">
+
+            <label
+                class="form-label"
+                for="otp"
+            >
+                🔐 Enter OTP
+            </label>
+
+
+            <div class="input-group">
+
+                <input
+                    type="text"
+                    id="otp"
+                    class="form-control"
+                    placeholder="Enter 6 digit OTP"
+                    maxlength="6"
+                    inputmode="numeric"
+                >
+
+
+                <button
+                    type="button"
+                    id="verifyOtpBtn"
+                    class="btn btn-primary"
+                    disabled
+                >
+                    Verify
+                </button>
+
+            </div>
+
+
+            <small
+                id="otpStatus"
+                class="text-muted"
+            >
+                OTP verify nahi hua
+            </small>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- SUMMARY -->
+        <!-- ================================================= -->
+
+        <div class="summary-box">
+
+            <h4 class="mb-3">
+                📋 Booking Summary
+            </h4>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Selected Places
+                </span>
+
+                <strong id="selectedPlacesText">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Estimated Distance
+                </span>
+
+                <strong>
+
+                    <span id="estimatedKm">
+                        0
+                    </span>
+
+                    KM
+
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    Base Fare
+                </span>
+
+                <strong>
+                    ₹500
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row total-row">
+
+                <span>
+                    Total Amount
+                </span>
+
+                <strong>
+
+                    ₹<span id="totalAmount">
+                        500
+                    </span>
+
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- HIDDEN AMOUNT VALUES -->
+        <!-- ================================================= -->
+
+        <input
+            type="hidden"
+            name="estimated_km_hidden"
+            id="estimatedKmHidden"
+            value="0"
+        >
+
+
+        <input
+            type="hidden"
+            name="total_amount_hidden"
+            id="totalAmountHidden"
+            value="500"
+        >
+
+
+        <!-- ================================================= -->
+        <!-- SUBMIT -->
+        <!-- ================================================= -->
+
+        <button
+            type="submit"
+            id="paymentBtn"
+            class="btn btn-success btn-lg w-100 mt-4"
+            disabled
+        >
+            🔐 Verify Mobile First
+        </button>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =================================================
+    // GET ELEMENTS
+    // =================================================
+
+    const roomNumberInput =
+        document.getElementById("roomNumber");
+
+    const phoneNumber =
+        document.getElementById("phoneNumber");
+
+    const sendOtpBtn =
+        document.getElementById("sendOtpBtn");
+
+    const otpInput =
+        document.getElementById("otp");
+
+    const verifyOtpBtn =
+        document.getElementById("verifyOtpBtn");
+
+    const otpStatus =
+        document.getElementById("otpStatus");
+
+    const paymentBtn =
+        document.getElementById("paymentBtn");
+
+    const bookingForm =
+        document.getElementById("carBookingForm");
+
+    const selectedPlacesHidden =
+        document.getElementById("selectedPlacesHidden");
+
+    const selectedPlacesText =
+        document.getElementById("selectedPlacesText");
+
+    const estimatedKm =
+        document.getElementById("estimatedKm");
+
+    const estimatedKmHidden =
+        document.getElementById("estimatedKmHidden");
+
+    const totalAmount =
+        document.getElementById("totalAmount");
+
+    const totalAmountHidden =
+        document.getElementById("totalAmountHidden");
+
+    const placeCheckboxes =
+        document.querySelectorAll(".place-checkbox");
+
+
+    let otpVerified = false;
+
+
+    // =================================================
+    // CSRF TOKEN
+    // =================================================
+
+    function getCSRFToken() {
+
+        const csrfInput =
+            document.querySelector(
+                '[name="csrfmiddlewaretoken"]'
+            );
+
+        if (csrfInput) {
+            return csrfInput.value;
+        }
+
+        return null;
+    }
+
+
+    // =================================================
+    // RESET OTP VERIFICATION
+    // =================================================
+
+    function resetOtpVerification() {
+
+        otpVerified = false;
+
+
+        if (verifyOtpBtn) {
+
+            verifyOtpBtn.disabled = true;
+
+            verifyOtpBtn.innerText =
+                "Verify";
+
+            verifyOtpBtn.classList.remove(
+                "btn-success"
+            );
+
+            verifyOtpBtn.classList.add(
+                "btn-primary"
+            );
+        }
+
+
+        if (paymentBtn) {
+
+            paymentBtn.disabled = true;
+
+            paymentBtn.innerText =
+                "🔐 Verify Mobile First";
+        }
+
+
+        if (otpStatus) {
+
+            otpStatus.innerText =
+                "OTP verify nahi hua";
+
+            otpStatus.className =
+                "text-muted";
+        }
+
+    }
+
+
+    // =================================================
+    // ROOM NUMBER CHANGE
+    // =================================================
+
+    if (roomNumberInput) {
+
+        roomNumberInput.addEventListener(
+            "input",
+            function () {
+
+                resetOtpVerification();
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // PHONE NUMBER CHANGE
+    // =================================================
+
+    if (phoneNumber) {
+
+        phoneNumber.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value.replace(
+                        /\D/g,
+                        ""
+                    );
+
+                resetOtpVerification();
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // OTP INPUT ONLY NUMBERS
+    // =================================================
+
+    if (otpInput) {
+
+        otpInput.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value.replace(
+                        /\D/g,
+                        ""
+                    ).slice(0, 6);
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // PLACE CALCULATION
+    // =================================================
+
+    function calculateBooking() {
+
+        let totalKm = 0;
+
+        let selectedPlaces = [];
+
+
+        placeCheckboxes.forEach(
+            function (checkbox) {
+
+                if (checkbox.checked) {
+
+                    selectedPlaces.push(
+                        checkbox.value
+                    );
+
+                    totalKm +=
+                        parseFloat(
+                            checkbox.dataset.km
+                        ) || 0;
+
+                }
+
+            }
+        );
+
+
+        // ---------------------------------------------
+        // SELECTED PLACES
+        // ---------------------------------------------
+
+        selectedPlacesText.innerText =
+            selectedPlaces.length;
+
+
+        selectedPlacesHidden.value =
+            selectedPlaces.join(", ");
+
+
+        // ---------------------------------------------
+        // KM
+        // ---------------------------------------------
+
+        estimatedKm.innerText =
+            totalKm.toFixed(1);
+
+        estimatedKmHidden.value =
+            totalKm.toFixed(1);
+
+
+        // ---------------------------------------------
+        // PRICE
+        // ---------------------------------------------
+
+        const baseFare = 500;
+
+        const perKmRate = 20;
+
+        let amount =
+            baseFare +
+            (
+                totalKm *
+                perKmRate
+            );
+
+
+        totalAmount.innerText =
+            amount.toFixed(2);
+
+        totalAmountHidden.value =
+            amount.toFixed(2);
+
+    }
+
+
+    // =================================================
+    // PLACE CHANGE EVENT
+    // =================================================
+
+    placeCheckboxes.forEach(
+        function (checkbox) {
+
+            checkbox.addEventListener(
+                "change",
+                calculateBooking
+            );
+
+        }
+    );
+
+
+    // Initial calculation
+
+    calculateBooking();
+
+
+    // =================================================
+    // SET MINIMUM BOOKING DATE
+    // =================================================
+
+    const bookingDate =
+        document.getElementById("bookingDate");
+
+
+    if (bookingDate) {
+
+        const today =
+            new Date();
+
+        const year =
+            today.getFullYear();
+
+        const month =
+            String(
+                today.getMonth() + 1
+            ).padStart(2, "0");
+
+        const day =
+            String(
+                today.getDate()
+            ).padStart(2, "0");
+
+
+        bookingDate.min =
+            `${year}-${month}-${day}`;
+
+    }
+
+
+    // =================================================
+    // SEND OTP
+    // =================================================
+
+    if (sendOtpBtn) {
+
+        sendOtpBtn.addEventListener(
+            "click",
+            async function () {
+
+                const roomNumber =
+                    roomNumberInput.value.trim();
+
+                const phone =
+                    phoneNumber.value.trim();
+
+
+                // -------------------------------------
+                // ROOM VALIDATION
+                // -------------------------------------
+
+                if (!roomNumber) {
+
+                    alert(
+                        "❌ Pehle room number enter karo."
+                    );
+
+                    roomNumberInput.focus();
+
+                    return;
+
+                }
+
+
+                // -------------------------------------
+                // PHONE VALIDATION
+                // -------------------------------------
+
+                if (
+                    !phone.match(
+                        /^[6-9]\d{9}$/
+                    )
+                ) {
+
+                    alert(
+                        "❌ Valid 10 digit Indian mobile number enter karo."
+                    );
+
+                    phoneNumber.focus();
+
+                    return;
+
+                }
+
+
+                // -------------------------------------
+                // BUTTON
+                // -------------------------------------
+
+                sendOtpBtn.disabled = true;
+
+                sendOtpBtn.innerText =
+                    "Checking...";
+
+
+                try {
+
+                    // ---------------------------------
+                    // SEND REQUEST
+                    // ---------------------------------
+
+                    const response =
+                        await fetch(
+                            "{% url 'send_otp' %}",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "X-CSRFToken":
+                                        getCSRFToken()
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        room_number:
+                                            roomNumber,
+
+                                        phone_number:
+                                            phone
+
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    // ---------------------------------
+                    // ERROR
+                    // ---------------------------------
+
+                    if (!data.success) {
+
+                        otpVerified = false;
+
+                        if (paymentBtn) {
+
+                            paymentBtn.disabled =
+                                true;
+
+                        }
+
+
+                        alert(
+                            "❌ " +
+                            (
+                                data.error ||
+                                "OTP send nahi hua."
+                            )
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------
+                    // SUCCESS
+                    // ---------------------------------
+
+                    alert(
+                        "✅ Mobile number room booking se match karta hai.\n\n" +
+                        "OTP Django terminal mein print hua hai."
+                    );
+
+
+                    otpStatus.innerText =
+                        "OTP sent. Django terminal check karo.";
+
+                    otpStatus.className =
+                        "text-warning";
+
+
+                    verifyOtpBtn.disabled =
+                        false;
+
+
+                    otpInput.value = "";
+
+                    otpInput.focus();
+
+                }
+
+
+                catch (error) {
+
+                    console.error(
+                        "OTP ERROR:",
+                        error
+                    );
+
+
+                    alert(
+                        "❌ Server error. Please try again."
+                    );
+
+                }
+
+
+                finally {
+
+                    sendOtpBtn.disabled =
+                        false;
+
+                    sendOtpBtn.innerText =
+                        "📱 Send OTP";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // VERIFY OTP
+    // =================================================
+
+    if (verifyOtpBtn) {
+
+        verifyOtpBtn.addEventListener(
+            "click",
+            async function () {
+
+                const phone =
+                    phoneNumber.value.trim();
+
+                const otp =
+                    otpInput.value.trim();
+
+
+                // -------------------------------------
+                // PHONE VALIDATION
+                // -------------------------------------
+
+                if (
+                    !phone.match(
+                        /^[6-9]\d{9}$/
+                    )
+                ) {
+
+                    alert(
+                        "❌ Valid mobile number enter karo."
+                    );
+
+                    return;
+
+                }
+
+
+                // -------------------------------------
+                // OTP VALIDATION
+                // -------------------------------------
+
+                if (
+                    !otp.match(
+                        /^\d{6}$/
+                    )
+                ) {
+
+                    alert(
+                        "❌ 6 digit OTP enter karo."
+                    );
+
+                    otpInput.focus();
+
+                    return;
+
+                }
+
+
+                verifyOtpBtn.disabled =
+                    true;
+
+                verifyOtpBtn.innerText =
+                    "Verifying...";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "{% url 'verify_otp' %}",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "X-CSRFToken":
+                                        getCSRFToken()
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        phone_number:
+                                            phone,
+
+                                        otp:
+                                            otp
+
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    // ---------------------------------
+                    // WRONG OTP
+                    // ---------------------------------
+
+                    if (!data.success) {
+
+                        otpVerified =
+                            false;
+
+
+                        if (paymentBtn) {
+
+                            paymentBtn.disabled =
+                                true;
+
+                        }
+
+
+                        otpStatus.innerText =
+                            data.error ||
+                            "Wrong OTP.";
+
+                        otpStatus.className =
+                            "text-danger";
+
+
+                        alert(
+                            "❌ " +
+                            (
+                                data.error ||
+                                "OTP verification failed."
+                            )
+                        );
+
+
+                        verifyOtpBtn.disabled =
+                            false;
+
+                        verifyOtpBtn.innerText =
+                            "Verify";
+
+
+                        return;
+
+                    }
+
+
+                    // ---------------------------------
+                    // OTP VERIFIED
+                    // ---------------------------------
+
+                    otpVerified =
+                        true;
+
+
+                    otpStatus.innerText =
+                        "✅ Mobile number verified successfully.";
+
+                    otpStatus.className =
+                        "text-success";
+
+
+                    verifyOtpBtn.innerText =
+                        "✓ Verified";
+
+
+                    verifyOtpBtn.classList.remove(
+                        "btn-primary"
+                    );
+
+                    verifyOtpBtn.classList.add(
+                        "btn-success"
+                    );
+
+
+                    verifyOtpBtn.disabled =
+                        true;
+
+
+                    paymentBtn.disabled =
+                        false;
+
+
+                    paymentBtn.innerText =
+                        "💳 Continue to Payment";
+
+
+                    alert(
+                        "✅ OTP verified successfully!"
+                    );
+
+                }
+
+
+                catch (error) {
+
+                    console.error(
+                        "VERIFY OTP ERROR:",
+                        error
+                    );
+
+
+                    alert(
+                        "❌ Server error. Please try again."
+                    );
+
+
+                    verifyOtpBtn.disabled =
+                        false;
+
+                    verifyOtpBtn.innerText =
+                        "Verify";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // BOOKING FORM SUBMIT
+    // =================================================
+
+    if (bookingForm) {
+
+        bookingForm.addEventListener(
+            "submit",
+            function (event) {
+
+
+                // -------------------------------------
+                // OTP CHECK
+                // -------------------------------------
+
+                if (!otpVerified) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "❌ Pehle mobile OTP verify karo."
+                    );
+
+                    return false;
+
+                }
+
+
+                // -------------------------------------
+                // PLACES CHECK
+                // -------------------------------------
+
+                if (
+                    selectedPlacesHidden.value.trim()
+                    ===
+                    ""
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "❌ Kam se kam ek sightseeing place select karo."
+                    );
+
+                    return false;
+
+                }
+
+
+                // -------------------------------------
+                // ROOM CHECK
+                // -------------------------------------
+
+                if (
+                    roomNumberInput.value.trim()
+                    ===
+                    ""
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "❌ Room number enter karo."
+                    );
+
+                    return false;
+
+                }
+
+
+                return true;
+
+            }
+        );
+
+    }
+
+});
+
+
+// =========================================================
+// PAYMENT CONFIRMATION
+// =========================================================
+
+function confirmPayment() {
+
+    return confirm(
+        "Kya aapne ₹" +
+        "{{ booking.total_amount }}" +
+        " payment complete kar diya hai?"
+    );
+
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-3">
+                
+                <!-- CARD HEADER: Room Number & Type Display -->
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h3 class="mb-1">
+                        {% if room %}
+                            Booking for Room No: {{ room.room_number }}
+                        {% else %}
+                            Hotel Room Booking Form
+                        {% endif %}
+                    </h3>
+                    {% if room %}
+                        <small class="text-white-50">({{ room.Roomtype }})</small>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Booking Form -->
+                    <form method="POST" action="{% url 'Room_Bookd' %}?room={{ room.id|default:request.GET.room }}">
+                        {% csrf_token %}
+
+                        <!-- Customer Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">Full Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">Email Address:</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com" required>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label for="phone" class="form-label fw-bold">Mobile Number:</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="+91 0000000000" required>
+                        </div>
+
+                        <!-- Room Details (Readonly) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Selected Room Details:</label>
+                            <input type="text"
+                                   class="form-control"
+                                   value="Room No: {{ room.room_number|default:request.GET.room }} - {{ room.Roomtype }}"
+                                   readonly>
+                            
+                            <input type="hidden"
+                                   name="room_id"
+                                   value="{{ room.id|default:request.GET.room }}">
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="checkin" class="form-label fw-bold">Check-in Date:</label>
+                                <input type="date" class="form-control" id="checkin" name="checkin" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="checkout" class="form-label fw-bold">Check-out Date:</label>
+                                <input type="date" class="form-control" id="checkout" name="checkout" required>
+                            </div>
+                        </div>
+
+                        <!-- Persons Count -->
+                        <div class="mb-3">
+                            <label for="people" class="form-label fw-bold">How many people will stay?</label>
+                            <input type="number" class="form-control" id="people" name="people" min="1" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Confirm Booking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dynamic Today Date Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Aaj ki date (YYYY-MM-DD format me) generate karein
+        const today = new Date().toISOString().split('T')[0];
+        
+        const checkinInput = document.getElementById('checkin');
+        const checkoutInput = document.getElementById('checkout');
+
+        // Check-in input par aaj se purani dates block karein
+        checkinInput.min = today;
+
+        // Jab Check-in date select ho, tab Check-out me uske agle din ki date min set ho jaye
+        checkinInput.addEventListener('change', function () {
+            checkoutInput.min = this.value;
+            if (checkoutInput.value && checkoutInput.value < this.value) {
+                checkoutInput.value = this.value;
+            }
+        });
+    });
+</script>
+
+{% endblock body %}

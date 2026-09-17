@@ -1,0 +1,33 @@
+{% block body %}
+
+<style> .payment-done-section { min-height: 100vh; display: flex; justify-content: center; align-items: center; } .payment-done-card { width: 100%; max-width: 500px; padding: 50px 30px; text-align: center; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); } .success-icon { font-size: 70px; } </style>
+
+<div class="payment-done-section">
+
+<div class="card payment-done-card">
+
+    <div class="success-icon">
+        ✅
+    </div>
+
+    <h2 class="text-success mt-3">
+        Payment Done!
+    </h2>
+
+    <h3 class="mt-3">
+        Thank You
+    </h3>
+
+    <p class="text-muted mt-3">
+        Your room booking has been successfully confirmed.
+    </p>
+
+    <a href="/" class="btn btn-primary mt-3 px-4">
+        Go to Home
+    </a>
+
+</div>
+
+</div>
+
+{% endblock body %}

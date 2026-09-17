@@ -1,0 +1,1198 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<br>
+<br>
+<br>
+<br>
+
+<style>
+
+    .page-container {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+
+        from {
+            opacity: 0;
+            transform: translateY(25px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    .main-heading {
+
+        padding: 12px;
+
+        border-radius: 8px;
+
+        letter-spacing: 1px;
+
+    }
+
+
+    /* =========================
+       REVIEW SECTION
+    ========================= */
+
+    .problem-form-card {
+
+        background: #ffffff;
+
+        padding: 25px;
+
+        border-radius: 12px;
+
+        box-shadow:
+            0 5px 20px rgba(0, 0, 0, 0.08);
+
+    }
+
+
+    .form-control {
+
+        border-radius: 8px;
+
+        transition: 0.3s;
+
+    }
+
+
+    .form-control:focus {
+
+        transform: scale(1.01);
+
+        box-shadow:
+            0 0 10px rgba(13, 110, 253, 0.25);
+
+    }
+
+
+    .submit-btn {
+
+        border-radius: 8px;
+
+        padding: 10px 35px;
+
+        transition: 0.3s;
+
+    }
+
+
+    .submit-btn:hover {
+
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 5px 15px rgba(13, 110, 253, 0.4);
+
+    }
+
+
+    .problem-card {
+
+        border: none;
+
+        border-left: 5px solid #0d6efd;
+
+        border-radius: 10px;
+
+        transition: 0.3s ease;
+
+    }
+
+
+    .problem-card:hover {
+
+        transform: translateY(-5px);
+
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.12);
+
+    }
+
+
+    .rating-stars {
+
+        color: #ffc107;
+
+        font-size: 20px;
+
+        letter-spacing: 2px;
+
+    }
+
+
+    /* =========================
+       CHATBOT
+    ========================= */
+
+    .chat-container {
+
+        height: 620px;
+
+        background: #ffffff;
+
+        border-radius: 18px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 5px 25px rgba(0, 0, 0, 0.15);
+
+        display: flex;
+
+        flex-direction: column;
+
+    }
+
+
+    /* =========================
+       CHAT HEADER
+    ========================= */
+
+    .chat-header {
+
+        height: 75px;
+
+        display: flex;
+
+        align-items: center;
+
+        padding: 12px 18px;
+
+        color: white;
+
+        background: linear-gradient(
+            135deg,
+            #8b5e34,
+            #c49a6c
+        );
+
+    }
+
+
+    .hotel-icon {
+
+        width: 48px;
+
+        height: 48px;
+
+        border-radius: 50%;
+
+        background: white;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        font-size: 24px;
+
+        margin-right: 12px;
+
+    }
+
+
+    .chat-header h5 {
+
+        margin: 0;
+
+    }
+
+
+    .chat-header small {
+
+        color: #eaffea;
+
+    }
+
+
+    /* =========================
+       CHAT BODY
+    ========================= */
+
+    .chat-body {
+
+        flex: 1;
+
+        padding: 18px;
+
+        overflow-y: auto;
+
+        background: #f5f7fb;
+
+    }
+
+
+    .message {
+
+        display: flex;
+
+        margin-bottom: 15px;
+
+    }
+
+
+    .avatar {
+
+        width: 35px;
+
+        height: 35px;
+
+        min-width: 35px;
+
+        border-radius: 50%;
+
+        background: #ead8c0;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        margin-right: 8px;
+
+    }
+
+
+    .message-content {
+
+        max-width: 75%;
+
+        padding: 10px 14px;
+
+        border-radius: 15px;
+
+        font-size: 14px;
+
+        line-height: 1.5;
+
+    }
+
+
+    .bot-message .message-content {
+
+        background: white;
+
+        border-top-left-radius: 3px;
+
+        box-shadow:
+            0 2px 8px rgba(0,0,0,0.08);
+
+    }
+
+
+    .user-message {
+
+        justify-content: flex-end;
+
+    }
+
+
+    .user-message .message-content {
+
+        background: #8b5e34;
+
+        color: white;
+
+        border-top-right-radius: 3px;
+
+    }
+
+
+    /* =========================
+       QUICK BUTTONS
+    ========================= */
+
+    .quick-buttons {
+
+        display: flex;
+
+        gap: 7px;
+
+        padding: 10px;
+
+        overflow-x: auto;
+
+        background: white;
+
+        border-top: 1px solid #eee;
+
+    }
+
+
+    .quick-buttons button {
+
+        white-space: nowrap;
+
+        border: 1px solid #c49a6c;
+
+        background: #fffaf5;
+
+        color: #76502e;
+
+        padding: 7px 10px;
+
+        border-radius: 20px;
+
+        cursor: pointer;
+
+        font-size: 12px;
+
+    }
+
+
+    .quick-buttons button:hover {
+
+        background: #8b5e34;
+
+        color: white;
+
+    }
+
+
+    /* =========================
+       ROOM RESULT
+    ========================= */
+
+    .room-result {
+
+        background: #fffaf5;
+
+        border: 1px solid #ead8c0;
+
+        border-radius: 10px;
+
+        padding: 10px;
+
+        margin-top: 5px;
+
+    }
+
+
+    /* =========================
+       CHAT INPUT
+    ========================= */
+
+    .chat-input {
+
+        height: 65px;
+
+        display: flex;
+
+        align-items: center;
+
+        padding: 10px;
+
+        background: white;
+
+        border-top: 1px solid #ddd;
+
+    }
+
+
+    .chat-input input {
+
+        flex: 1;
+
+        height: 43px;
+
+        border: none;
+
+        outline: none;
+
+        background: #f2f3f5;
+
+        border-radius: 25px;
+
+        padding: 0 16px;
+
+    }
+
+
+    .chat-input button {
+
+        width: 43px;
+
+        height: 43px;
+
+        margin-left: 7px;
+
+        border: none;
+
+        border-radius: 50%;
+
+        background: #8b5e34;
+
+        color: white;
+
+        font-size: 18px;
+
+        cursor: pointer;
+
+    }
+
+
+    .chat-input button:hover {
+
+        background: #76502e;
+
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 991px) {
+
+        .chat-container {
+
+            margin-top: 30px;
+
+        }
+
+    }
+
+</style>
+
+<div class="container-fluid page-container">
+
+
+<div class="row g-4">
+
+
+    <!-- ================================= -->
+    <!-- LEFT SIDE : HOTEL GUEST REVIEWS -->
+    <!-- ================================= -->
+
+    <div class="col-lg-6">
+
+        <h4 class="text-center text-bg-dark border border-dark main-heading">
+
+            Hotel Guest Reviews
+
+        </h4>
+
+
+        <div class="problem-form-card  border border-3">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+
+                <!-- NAME -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Name
+
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="name"
+                        placeholder="Enter your name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Email
+
+                    </label>
+
+                    <input
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PROBLEM -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Your Problem
+
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        name="problem"
+                        rows="5"
+                        placeholder="Write your problem here..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <!-- RATING -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Hotel Rating
+
+                    </label>
+
+                    <select
+                        class="form-control"
+                        name="rating"
+                        required
+                    >
+
+                        <option value="">
+
+                            Select Rating
+
+                        </option>
+
+                        <option value="1">
+                            ★
+                        </option>
+
+                        <option value="2">
+                            ★★
+                        </option>
+
+                        <option value="3">
+                            ★★★
+                        </option>
+
+                        <option value="4">
+                            ★★★★
+                        </option>
+
+                        <option value="5">
+                            ★★★★★
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary submit-btn"
+                >
+
+                    Submit Problem
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+             SUCCESS MESSAGE
+        ========================= -->
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert alert-success mt-3">
+
+                    <b>✓</b>
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- ================================= -->
+    <!-- RIGHT SIDE : CHATBOT -->
+    <!-- ================================= -->
+
+    <div class="col-lg-6">
+
+
+        <h4 class="text-center text-bg-dark border border-dark main-heading">
+
+            Hotel Assistant
+
+        </h4>
+
+
+        <div class="chat-container  border border-3">
+
+
+            <!-- =========================
+                 CHAT HEADER
+            ========================= -->
+
+            <div class="chat-header">
+
+
+                <div class="hotel-icon">
+
+                    🤖
+
+                </div>
+
+
+                <div>
+
+                    <h5>
+
+                        Hotel Assistant
+
+                    </h5>
+
+                    <small>
+
+                        ● Online
+
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 CHAT BODY
+            ========================= -->
+
+            <div
+                class="chat-body"
+                id="chatBody"
+            >
+
+
+                <div class="message bot-message">
+
+
+                    <div class="avatar">
+
+                        🤖
+
+                    </div>
+
+
+                    <div class="message-content">
+
+                        Hello! 👋
+
+                        <br>
+
+                        Welcome to our hotel.
+
+                        <br>
+
+                        How can I help you today?
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 QUICK BUTTONS
+            ========================= -->
+
+            <div class="quick-buttons">
+
+
+                <button
+                    onclick="sendQuickMessage('Tell me about rooms')"
+                >
+
+                    🛏️ Rooms
+
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage('I want to book a room')"
+                >
+
+                    📅 Booking
+
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage('What is check-in time?')"
+                >
+
+                    🕐 Check-in
+
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage('Tell me about restaurant')"
+                >
+
+                    🍽️ Food
+
+                </button>
+
+
+                <button
+                    onclick="sendQuickMessage('I need housekeeping')"
+                >
+
+                    🧹 Housekeeping
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 CHAT INPUT
+            ========================= -->
+
+            <div class="chat-input">
+
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type your message..."
+                >
+
+
+                <button
+                    onclick="sendMessage()"
+                >
+
+                    ➤
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+</div>
+
+<script>
+
+
+    // =========================================
+    // CHAT ELEMENTS
+    // =========================================
+
+    const input =
+        document.getElementById("messageInput");
+
+    const chatBody =
+        document.getElementById("chatBody");
+
+
+
+    // =========================================
+    // ADD MESSAGE
+    // =========================================
+
+    function addMessage(message, type) {
+
+
+        const messageDiv =
+            document.createElement("div");
+
+
+        messageDiv.classList.add(
+            "message",
+            type === "user"
+                ? "user-message"
+                : "bot-message"
+        );
+
+
+        if (type === "bot") {
+
+
+            messageDiv.innerHTML = `
+
+                <div class="avatar">
+                    🤖
+                </div>
+
+                <div class="message-content">
+                    ${message}
+                </div>
+
+            `;
+
+
+        } else {
+
+
+            messageDiv.innerHTML = `
+
+                <div class="message-content">
+                    ${message}
+                </div>
+
+            `;
+
+        }
+
+
+        chatBody.appendChild(messageDiv);
+
+
+        chatBody.scrollTop =
+            chatBody.scrollHeight;
+
+    }
+
+
+
+    // =========================================
+    // QUICK MESSAGE
+    // =========================================
+
+    function sendQuickMessage(message) {
+
+
+        input.value = message;
+
+
+        sendMessage();
+
+    }
+
+
+
+    // =========================================
+    // SEND MESSAGE
+    // =========================================
+
+    function sendMessage() {
+
+
+        const message =
+            input.value.trim();
+
+
+        if (message === "") {
+
+            return;
+
+        }
+
+
+        // -------------------------------------
+        // USER MESSAGE
+        // -------------------------------------
+
+        addMessage(
+            message,
+            "user"
+        );
+
+
+        input.value = "";
+
+
+
+        // -------------------------------------
+        // LOADING MESSAGE
+        // -------------------------------------
+
+        addMessage(
+            "🤖 Thinking...",
+            "bot"
+        );
+
+
+
+        // -------------------------------------
+        // API REQUEST
+        // -------------------------------------
+
+        fetch(
+            "/chatbot/chat/?message=" +
+            encodeURIComponent(message)
+        )
+
+
+        .then(response => {
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server error"
+                );
+
+            }
+
+
+            return response.json();
+
+        })
+
+
+        .then(data => {
+
+
+            // ---------------------------------
+            // REMOVE THINKING MESSAGE
+            // ---------------------------------
+
+            const messages =
+                chatBody.querySelectorAll(
+                    ".bot-message"
+                );
+
+
+            if (messages.length > 1) {
+
+                messages[
+                    messages.length - 1
+                ].remove();
+
+            }
+
+
+
+            let reply = "";
+
+
+
+            // =================================
+            // AI ANSWER
+            // =================================
+
+            if (data.answer) {
+
+
+                reply += data.answer
+                    .replace(/\n/g, "<br>");
+
+            }
+
+
+
+            // =================================
+            // AVAILABLE ROOMS
+            // =================================
+
+            if (
+                data.available_rooms &&
+                data.available_rooms.length > 0
+            ) {
+
+
+                reply +=
+                    "<br><br>" +
+                    "<b>🏨 Available Room Details:</b>" +
+                    "<br><br>";
+
+
+                data.available_rooms.forEach(
+                    room => {
+
+
+                        reply += `
+
+                            <div class="room-result">
+
+                                <b>🛏️ Room:</b>
+                                ${room.room_number}
+
+                                <br>
+
+                                <b>🏠 Type:</b>
+                                ${room.room_type}
+
+                                <br>
+
+                                <b>💰 Price:</b>
+                                ₹${room.price}
+
+                                ${
+                                    room.facilities
+                                    ?
+                                    `<br>
+                                    <b>✨ Facilities:</b>
+                                    ${room.facilities}`
+                                    :
+                                    ""
+                                }
+
+                            </div>
+
+                        `;
+
+                    }
+                );
+
+            }
+
+
+
+            // =================================
+            // NO ROOMS
+            // =================================
+
+            else if (
+                data.total_available !== undefined &&
+                data.total_available === 0
+            ) {
+
+
+                reply +=
+                    "<br><br>" +
+                    "❌ No rooms are available.";
+
+            }
+
+
+
+            // =================================
+            // FALLBACK
+            // =================================
+
+            if (reply === "") {
+
+
+                reply =
+                    "Sorry, I couldn't find any information.";
+
+            }
+
+
+
+            // =================================
+            // SHOW BOT ANSWER
+            // =================================
+
+            setTimeout(() => {
+
+
+                addMessage(
+                    reply,
+                    "bot"
+                );
+
+
+            }, 400);
+
+
+        })
+
+
+        .catch(error => {
+
+
+            console.error(
+                "Chatbot Error:",
+                error
+            );
+
+
+            // Remove thinking message
+
+            const messages =
+                chatBody.querySelectorAll(
+                    ".bot-message"
+                );
+
+
+            if (messages.length > 1) {
+
+                messages[
+                    messages.length - 1
+                ].remove();
+
+            }
+
+
+            addMessage(
+                "❌ Sorry, something went wrong.",
+                "bot"
+            );
+
+        });
+
+    }
+
+
+
+    // =========================================
+    // ENTER KEY
+    // =========================================
+
+    input.addEventListener(
+        "keypress",
+        function(event) {
+
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+</script>
+
+{% endblock body %}

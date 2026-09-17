@@ -1,0 +1,121 @@
+{% extends "admin/basa.html" %}
+
+{% block body %}
+
+<div class="container-fluid mt-4">
+
+<div class="card shadow">
+
+    <div class="card-header bg-dark text-white">
+        <h4 class="mb-0 text-center">
+            Room Booking Management
+        </h4>
+    </div>
+
+    <div class="card-body table-responsive">
+
+        <table class="table table-bordered table-hover text-center align-middle">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Room Type</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>People</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for booking in bookings %}
+
+                <tr>
+
+                    <td>{{ booking.id }}</td>
+
+                    <td>{{ booking.name }}</td>
+
+                    <td>{{ booking.email }}</td>
+
+                    <td>{{ booking.phone }}</td>
+
+                    <td>{{ booking.room_type }}</td>
+
+                    <td>{{ booking.checkin }}</td>
+
+                    <td>{{ booking.checkout }}</td>
+
+                    <td>{{ booking.people }}</td>
+
+                    <td>
+
+                        {% if booking.status == "Confirmed" %}
+
+                            <span class="badge bg-success">
+                                Confirmed
+                            </span>
+
+                        {% elif booking.status == "Rejected" %}
+
+                            <span class="badge bg-danger">
+                                Rejected
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <a href="{% url 'confirm_booking' booking.id %}"
+                           class="btn btn-success btn-sm">
+                            Confirm
+                        </a>
+
+                        <a href="{% url 'reject_booking' booking.id %}"
+                           class="btn btn-danger btn-sm">
+                            Reject
+                        </a>
+
+                        <a href="#"
+                           class="btn btn-primary btn-sm">
+                            Edit
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="10">
+                        No Room Booking Found
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock body %}

@@ -1,0 +1,961 @@
+{% extends "admin/basa.html" %}
+{% load static %}
+
+{% block body %}
+
+<style>
+    .dashboard {
+        background: #f5f7fb;
+        min-height: 100vh;
+        padding: 25px;
+    }
+
+    .dashboard-title {
+        font-weight: 700;
+        color: #172033;
+    }
+
+    .dashboard-subtitle {
+        color: #777;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 18px;
+        padding: 22px;
+        border: 1px solid #eee;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        height: 100%;
+        transition: 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        background: #f0f3ff;
+        margin-bottom: 15px;
+    }
+
+    .stat-title {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #172033;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 18px;
+        padding: 22px;
+        border: 1px solid #eee;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-top: 25px;
+    }
+
+    .section-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #172033;
+        margin-bottom: 20px;
+    }
+
+    .flow-box {
+        text-align: center;
+        padding: 20px 10px;
+        border-radius: 15px;
+        background: #f8f9fc;
+        border: 1px solid #eee;
+    }
+
+    .flow-icon {
+        font-size: 30px;
+        margin-bottom: 8px;
+    }
+
+    .flow-number {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .flow-label {
+        color: #777;
+        font-size: 13px;
+    }
+
+    .status-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 12px;
+        background: #f8f9fc;
+        margin-bottom: 10px;
+    }
+
+    .status-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+    }
+
+    .status-number {
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .confirmed {
+        background: #20a464;
+    }
+
+    .pending {
+        background: #f0ad00;
+    }
+
+    .rejected {
+        background: #dc3545;
+    }
+
+    .available {
+        background: #198754;
+    }
+
+    .booked {
+        background: #dc3545;
+    }
+
+    .feedback-card {
+        padding: 15px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    .rating {
+        font-weight: 700;
+    }
+
+    .mini-label {
+        font-size: 13px;
+        color: #777;
+    }
+
+    .progress {
+        height: 8px;
+        border-radius: 10px;
+    }
+
+    @media(max-width: 768px) {
+        .dashboard {
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 23px;
+        }
+    }
+</style>
+
+
+<div class="dashboard">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h2 class="dashboard-title">🏨 Hotel Management Dashboard</h2>
+            <p class="dashboard-subtitle">
+                Complete overview of your hotel
+            </p>
+        </div>
+
+        <div>
+            <span class="badge bg-dark p-2">
+                Hotel Overview
+            </span>
+        </div>
+    </div>
+
+
+    <!-- MAIN STAT CARDS -->
+    <div class="row g-4">
+
+        <!-- REVENUE -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+                <div class="stat-title">
+                    Total Revenue
+                </div>
+
+                <div class="stat-value">
+                    ₹{{ total_revenue|default:"0" }}
+                </div>
+
+                <small class="text-success">
+                    Hotel + Car Revenue
+                </small>
+
+            </div>
+        </div>
+
+
+        <!-- PEOPLE -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div class="stat-title">
+                    Total People
+                </div>
+
+                <div class="stat-value">
+                    {{ total_people|default:"0" }}
+                </div>
+
+                <small class="text-muted">
+                    Total guests
+                </small>
+
+            </div>
+        </div>
+
+
+        <!-- ROOMS -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🛏️
+                </div>
+
+                <div class="stat-title">
+                    Total Rooms
+                </div>
+
+                <div class="stat-value">
+                    {{ total_rooms|default:"0" }}
+                </div>
+
+                <small class="text-success">
+                    {{ available_rooms|default:"0" }} Available
+                </small>
+
+            </div>
+        </div>
+
+
+        <!-- BOOKINGS -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📅
+                </div>
+
+                <div class="stat-title">
+                    Total Bookings
+                </div>
+
+                <div class="stat-value">
+                    {{ total_bookings|default:"0" }}
+                </div>
+
+                <small class="text-primary">
+                    Room bookings
+                </small>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- HOTEL FLOW -->
+    <div class="section-card">
+
+        <div class="section-title">
+            🔄 Hotel Business Flow
+        </div>
+
+        <div class="row g-3">
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="flow-box">
+                    <div class="flow-icon">🏨</div>
+                    <div class="flow-number">
+                        {{ total_rooms|default:"0" }}
+                    </div>
+                    <div class="flow-label">
+                        Rooms
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="flow-box">
+                    <div class="flow-icon">👤</div>
+                    <div class="flow-number">
+                        {{ total_customers|default:"0" }}
+                    </div>
+                    <div class="flow-label">
+                        Customers
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="flow-box">
+                    <div class="flow-icon">📅</div>
+                    <div class="flow-number">
+                        {{ total_bookings|default:"0" }}
+                    </div>
+                    <div class="flow-label">
+                        Bookings
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="flow-box">
+                    <div class="flow-icon">🚗</div>
+                    <div class="flow-number">
+                        {{ total_car_bookings|default:"0" }}
+                    </div>
+                    <div class="flow-label">
+                        Car Bookings
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="flow-box">
+                    <div class="flow-icon">⭐</div>
+                    <div class="flow-number">
+                        {{ total_feedback|default:"0" }}
+                    </div>
+                    <div class="flow-label">
+                        Feedback
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="flow-box">
+                    <div class="flow-icon">💰</div>
+                    <div class="flow-number">
+                        ₹{{ car_revenue|default:"0" }}
+                    </div>
+                    <div class="flow-label">
+                        Car Revenue
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOOKING STATUS + ROOMS -->
+    <div class="row">
+
+        <!-- BOOKING STATUS -->
+        <div class="col-lg-5">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    📊 Booking Status
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-left">
+                        <span class="dot confirmed"></span>
+                        Confirmed
+                    </div>
+
+                    <div class="status-number">
+                        {{ confirmed_bookings|default:"0" }}
+                    </div>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-left">
+                        <span class="dot pending"></span>
+                        Pending
+                    </div>
+
+                    <div class="status-number">
+                        {{ pending_bookings|default:"0" }}
+                    </div>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <div class="status-left">
+                        <span class="dot rejected"></span>
+                        Rejected
+                    </div>
+
+                    <div class="status-number">
+                        {{ rejected_bookings|default:"0" }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ROOM STATUS -->
+        <div class="col-lg-7">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    🛏️ Room Status
+                </div>
+
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        Available Rooms
+                    </span>
+
+                    <strong>
+                        {{ available_rooms|default:"0" }}
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-4">
+                    <div
+                        class="progress-bar bg-success"
+                        style="width: {{ available_percentage|default:'0' }}%;">
+                    </div>
+                </div>
+
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        Booked Rooms
+                    </span>
+
+                    <strong>
+                        {{ booked_rooms|default:"0" }}
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+                    <div
+                        class="progress-bar bg-danger"
+                        style="width: {{ booked_percentage|default:'0' }}%;">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REVENUE CHART -->
+    <div class="section-card">
+
+        <div class="section-title">
+            📈 Revenue Overview
+        </div>
+
+        <div style="height:320px;">
+
+            <canvas id="revenueChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- PEOPLE + BOOKINGS CHART -->
+    <div class="row">
+
+        <div class="col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    👥 People Overview
+                </div>
+
+                <div style="height:300px;">
+
+                    <canvas id="peopleChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    📊 Booking Overview
+                </div>
+
+                <div style="height:300px;">
+
+                    <canvas id="bookingChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CAR BOOKING + FEEDBACK -->
+    <div class="row">
+
+        <!-- CAR -->
+        <div class="col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    🚗 Car Booking Overview
+                </div>
+
+
+                <div class="row g-3">
+
+                    <div class="col-6">
+
+                        <div class="flow-box">
+
+                            <div class="flow-icon">
+                                🚗
+                            </div>
+
+                            <div class="flow-number">
+                                {{ total_car_bookings|default:"0" }}
+                            </div>
+
+                            <div class="flow-label">
+                                Total Car Bookings
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <div class="flow-box">
+
+                            <div class="flow-icon">
+                                💰
+                            </div>
+
+                            <div class="flow-number">
+                                ₹{{ car_revenue|default:"0" }}
+                            </div>
+
+                            <div class="flow-label">
+                                Car Revenue
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <div class="flow-box">
+
+                            <div class="flow-icon">
+                                ✅
+                            </div>
+
+                            <div class="flow-number">
+                                {{ paid_car_bookings|default:"0" }}
+                            </div>
+
+                            <div class="flow-label">
+                                Paid
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <div class="flow-box">
+
+                            <div class="flow-icon">
+                                ⏳
+                            </div>
+
+                            <div class="flow-number">
+                                {{ unpaid_car_bookings|default:"0" }}
+                            </div>
+
+                            <div class="flow-label">
+                                Unpaid
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEEDBACK -->
+        <div class="col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    ⭐ Customer Feedback
+                </div>
+
+
+                <div class="feedback-card">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            Total Feedback
+                        </strong>
+
+                        <span class="rating">
+                            {{ total_feedback|default:"0" }}
+                        </span>
+
+                    </div>
+
+                    <div class="mini-label">
+                        Customer problems / feedback received
+                    </div>
+
+                </div>
+
+
+                <div class="feedback-card">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            Average Rating
+                        </strong>
+
+                        <span class="rating">
+                            ⭐ {{ average_rating|default:"0" }}/5
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feedback-card">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            Solved Problems
+                        </strong>
+
+                        <span class="rating text-success">
+                            {{ solved_problems|default:"0" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="feedback-card">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            Pending Problems
+                        </strong>
+
+                        <span class="rating text-danger">
+                            {{ pending_problems|default:"0" }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER SUMMARY -->
+    <div class="section-card text-center">
+
+        <h5 class="fw-bold">
+            🏨 Hotel Performance Summary
+        </h5>
+
+        <p class="text-muted mb-0">
+            {{ total_rooms|default:"0" }} rooms |
+            {{ total_bookings|default:"0" }} bookings |
+            {{ total_people|default:"0" }} guests |
+            {{ total_car_bookings|default:"0" }} car bookings |
+            ₹{{ total_revenue|default:"0" }} total revenue
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    /* ==========================
+       REVENUE CHART
+    ========================== */
+
+    const revenueCanvas =
+        document.getElementById("revenueChart");
+
+    new Chart(revenueCanvas, {
+
+        type: "line",
+
+        data: {
+
+            labels: {{ revenue_labels|default:"[]"|safe }},
+
+            datasets: [
+
+                {
+                    label: "Revenue",
+
+                    data: {{ revenue_data|default:"[]"|safe }},
+
+                    tension: 0.4,
+
+                    fill: true
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: true
+                }
+
+            },
+
+            scales: {
+
+                y: {
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+                            return "₹" + value;
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+    /* ==========================
+       PEOPLE CHART
+    ========================== */
+
+    const peopleCanvas =
+        document.getElementById("peopleChart");
+
+    new Chart(peopleCanvas, {
+
+        type: "bar",
+
+        data: {
+
+            labels: {{ people_labels|default:"[]"|safe }},
+
+            datasets: [
+
+                {
+                    label: "People",
+
+                    data: {{ people_data|default:"[]"|safe }}
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+                    beginAtZero: true
+                }
+
+            }
+
+        }
+
+    });
+
+
+    /* ==========================
+       BOOKING CHART
+    ========================== */
+
+    const bookingCanvas =
+        document.getElementById("bookingChart");
+
+    new Chart(bookingCanvas, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+                "Confirmed",
+                "Pending",
+                "Rejected"
+            ],
+
+            datasets: [
+
+                {
+
+                    data: [
+
+                        {{ confirmed_bookings|default:"0" }},
+
+                        {{ pending_bookings|default:"0" }},
+
+                        {{ rejected_bookings|default:"0" }}
+
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+{% endblock %}

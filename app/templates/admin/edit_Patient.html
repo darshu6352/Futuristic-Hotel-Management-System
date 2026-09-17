@@ -1,0 +1,14 @@
+
+{% block body %}
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="name" value="{{ patient.name }}">
+    <input type="text" name="number" value="{{ patient.number }}">
+    <input type="text" name="email" value="{{ patient.email }}">
+    <input type="text" name="address" value="{{ patient.address }}">
+    <input type="text" name="disease" value="{{ patient.disease }}">
+    
+    <button type="submit">Update</button>
+</form>
+{% endblock body%}

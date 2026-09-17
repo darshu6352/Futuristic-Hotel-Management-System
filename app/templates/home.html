@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+    <!-- Your External Custom CSS File -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <title>{% block title %}My Web App{% endblock %}</title>    
+</head>
+<body>
+{% block  body %}
+
+
+
+{% comment %} *********************************slider page********************************* {% endcomment %}
+
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{% static "img/d1.jpg" %}" class="d-block w-100"  img-fluid alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static "img/d2.jpg" %}" class="d-block w-100" img-fluid  alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{% static "img/d3.jpg" %}" class="d-block w-100"  img-fluid  alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+{% comment %} *************************************************************************************************** {% endcomment %}
+
+{% comment %} ************************************************************************************************** {% endcomment %}
+<div class="images-section my-5">
+  <div class="container-fluid">
+
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <img src="{% static 'img/h1.jpg' %}"
+             class="img-fluid w-100 rounded-4 shadow-lg border border-primary"
+             alt="Image 1"
+             style="height:250px; object-fit:cover;">
+      </div>
+
+      <div class="col-md-4">
+        <img src="{% static 'img/h2.jpg' %}"
+             class="img-fluid w-100 rounded-4 shadow-lg border border-success"
+             alt="Image 2"
+             style="height:250px; object-fit:cover;">
+      </div>
+
+      <div class="col-md-4">
+        <img src="{% static 'img/h3.jpg' %}"
+             class="img-fluid w-100 rounded-4 shadow-lg border border-danger"
+             alt="Image 3"
+             style="height:250px; object-fit:cover;">
+      </div>
+
+    </div>
+
+    <div class="row g-4 mt-2">
+
+      <div class="col-md-4">
+        <img src="{% static 'img/h4.jpg' %}"
+             class="img-fluid w-100 rounded-4 shadow-lg border border-warning"
+             alt="Image 4"
+             style="height:250px; object-fit:cover;">
+      </div>
+
+      <div class="col-md-4">
+        <img src="{% static 'img/h5.jpg' %}"
+             class="img-fluid w-100 rounded-4 shadow-lg border border-info"
+             alt="Image 5"
+             style="height:250px; object-fit:cover;">
+      </div>
+
+      <div class="col-md-4">
+        <img src="{% static 'img/h6.jpg' %}"
+             class="img-fluid w-100 rounded-4 shadow-lg border border-dark"
+             alt="Image 6"
+             style="height:250px; object-fit:cover;">
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% comment %} ************************************************************************************************** {% endcomment %}
+ <div class="container marketing">
+    <!-- Updated Title for Food Menu Theme -->
+    <h1 class="text-center mt-5 mb-5">Our Special Breakfast Menu</h1>
+
+    <hr class="featurette-divider">
+
+    <!-- First Food Block (f1.jpg: Cheese, Fruit & Greenery Display) -->
+    <div class="row featurette align-items-center">
+      <div class="col-md-7">
+        <h2 class="featurette-heading">Artisan Cheese & Fruit Platter <span class="text-muted">Gourmet Selection</span></h2>
+        <p class="lead">A refreshing arrangement of fine cheeses, dragon fruit cubes, and fresh garnishes to kickstart your morning with vibrant flavors.</p>
+      </div>
+      <div class="col-md-5">
+        <img src="{% static 'img/f1.jpg' %}" class="img-fluid mx-auto d-block rounded shadow rounded-circl" alt="Artisan Cheese Platter" width="500" height="500">
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <!-- Second Food Block (Alternating Layout) (f2.jpg: Continental Tray with Pastries, Toast & Milk) -->
+    <div class="row featurette align-items-center">
+      <div class="col-md-7 order-md-2">
+        <h2 class="featurette-heading">Continental Breakfast Tray <span class="text-muted">Bakery & Toast</span></h2>
+        <p class="lead">Enjoy a comforting setup featuring freshly baked croissants, chocolate muffins, glazed donuts, golden toast, and a glass of warm milk.</p>
+      </div>
+      <div class="col-md-5 order-md-1">
+        <img src="{% static 'img/f2.jpg' %}" class="img-fluid mx-auto d-block rounded shadow rounded-circl" alt="Continental Breakfast Tray" width="500" height="500">
+      </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <!-- Third Food Block (f3.jpg: Grand Spread with Breads, Cereals & Beverages) -->
+    <div class="row featurette align-items-center">
+      <div class="col-md-7">
+        <h2 class="featurette-heading">Grand Morning Spread <span class="text-muted">All-Inclusive Feast</span></h2>
+        <p class="lead">A luxurious table spread loaded with warm breads, cereals, fresh juices, fruit slices, and delicious hot entrees for the ultimate breakfast experience.</p>
+      </div>
+      <div class="col-md-5">
+        <img src="{% static 'img/f3.jpg' %}" class="img-fluid mx-auto d-block rounded shadow rounded-circl" alt="Grand Morning Spread" width="500" height="500">
+      </div>
+    </div>
+</div>
+
+    <hr class="featurette-divider">
+</div>
+
+{% comment %} ************************************************************************************************** {% endcomment %}
+
+
+  </div>
+
+  {% endblock  %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="{% static "js/script.js" %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+```html
+{% extends "admin/basa.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="container">
+
+<h2 class="booking-title text-center bg-white border rounded-3 p-3 mb-4 shadow-sm">
+    User Problems
+<h2/>    
+    <div class="table-responsive mt-4">
+
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Problem</th>
+                    <th>Rating</th>
+                    <th>Answer</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in problems %}
+
+                <!-- PROBLEM ROW -->
+                <tr>
+
+                    <td>{{ item.id }}</td>
+
+                    <td>{{ item.name }}</td>
+
+                    <td>{{ item.email }}</td>
+
+                    <td>{{ item.problem }}</td>
+
+                    <td>{{ item.rating }}</td>
+
+                    <td>
+                        {% if item.answer %}
+                            {{ item.answer }}
+                        {% else %}
+                            <span class="text-danger">
+                                Not Answered
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+
+                        <!-- ANSWER BUTTON -->
+                        <button
+                            type="button"
+                            class="btn btn-success btn-sm mb-1"
+                            onclick="showAnswerForm('{{ item.id }}')">
+                            Answer
+                        </button>
+
+                        <!-- DELETE BUTTON -->
+                        <a href="{% url 'DeleteProblem' item.id %}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete this problem?');">
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- ANSWER FORM -->
+                <tr id="answer-form-{{ item.id }}" style="display: none;">
+
+                    <td colspan="7">
+
+                        <div class="card p-3">
+
+                            <h5 class="mb-3">
+                                Answer to {{ item.name }}
+                            </h5>
+
+                            <p>
+                                <strong>Email:</strong>
+                                {{ item.email }}
+                            </p>
+
+                            <p>
+                                <strong>Problem:</strong>
+                                {{ item.problem }}
+                            </p>
+
+                            <form method="post"
+                                  action="{% url 'AnswerProblem' item.id %}">
+
+                                {% csrf_token %}
+
+                                <div class="mb-3">
+
+                                    <label class="form-label">
+                                        Your Answer
+                                    </label>
+
+                                    <textarea
+                                        name="answer"
+                                        class="form-control"
+                                        rows="4"
+                                        placeholder="Enter your answer..."
+                                        required>{% if item.answer %}{{ item.answer }}{% endif %}</textarea>
+
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+                                    Save Answer
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-secondary"
+                                        onclick="hideAnswerForm('{{ item.id }}')">
+                                    Cancel
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="text-center">
+                        No Problems Found
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showAnswerForm(id) {
+
+    document.getElementById("answer-form-" + id).style.display = "table-row";
+
+}
+
+function hideAnswerForm(id) {
+
+    document.getElementById("answer-form-" + id).style.display = "none";
+
+}
+
+</script>
+
+{% endblock body %}

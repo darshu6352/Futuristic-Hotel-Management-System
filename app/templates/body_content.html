@@ -1,0 +1,13 @@
+<h2>{{ part }}</h2>
+
+{% for product in products %}
+
+<h3>{{ product.name }}</h3>
+<p>{{ product.solution }}</p>
+<p>{{ product.information }}</p>
+
+<hr>
+
+{% empty %}
+<h1>No Products Found</h1>
+{% endfor %}

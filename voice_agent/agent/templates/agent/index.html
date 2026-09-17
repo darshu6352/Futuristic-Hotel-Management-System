@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hindi AI Voice Agent</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+
+            background: #f5f5f5;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+        }
+
+        .container {
+
+            width: 90%;
+            max-width: 700px;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.15);
+
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        /* =========================
+           START / STOP BUTTON
+        ========================= */
+
+        #startBtn {
+
+            width: 180px;
+            height: 180px;
+
+            border-radius: 50%;
+
+            border: none;
+
+            background: #222;
+
+            color: white;
+
+            font-size: 28px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        #startBtn:hover {
+
+            transform: scale(1.05);
+        }
+
+        #startBtn.active {
+
+            background: #e53935;
+
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        #status {
+
+            margin-top: 25px;
+
+            font-size: 17px;
+
+            color: #555;
+
+            min-height: 25px;
+        }
+
+        /* =========================
+           CHAT BOX
+        ========================= */
+
+        .box {
+
+            margin-top: 25px;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            background: #f1f1f1;
+
+            text-align: left;
+        }
+
+        .title {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+        }
+
+        #userText,
+        #aiText {
+
+            font-size: 20px;
+
+            line-height: 1.5;
+
+            min-height: 30px;
+
+            word-wrap: break-word;
+        }
+
+        /* =========================
+           CLEAR BUTTON
+        ========================= */
+
+        .clearBtn {
+
+            margin-top: 20px;
+
+            padding: 10px 20px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            background: #ddd;
+
+            font-size: 15px;
+        }
+
+        .clearBtn:hover {
+
+            background: #ccc;
+        }
+
+        /* =========================
+           SMALL INFO
+        ========================= */
+
+        .info {
+
+            margin-top: 20px;
+
+            font-size: 14px;
+
+            color: #777;
+
+            line-height: 1.5;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>🤖 Hindi AI Voice Agent</h1>
+
+
+    <!-- START / STOP -->
+
+    <button id="startBtn">
+        🎤 Start
+    </button>
+
+
+    <!-- STATUS -->
+
+    <div id="status">
+        Start button dabao aur baat karna shuru karo
+    </div>
+
+
+    <!-- USER -->
+
+    <div class="box">
+
+        <div class="title">
+            👤 You:
+        </div>
+
+        <div id="userText">
+            —
+        </div>
+
+    </div>
+
+
+    <!-- AI -->
+
+    <div class="box">
+
+        <div class="title">
+            🤖 AI:
+        </div>
+
+        <div id="aiText">
+            —
+        </div>
+
+    </div>
+
+
+    <!-- CLEAR -->
+
+    <button class="clearBtn" onclick="clearChat()">
+        🗑️ Clear
+    </button>
+
+
+    <div class="info">
+
+        💡 Start button sirf ek baar dabao.<br>
+
+        AI jawab dene ke baad automatically dobara sunega.
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const userText =
+    document.getElementById("userText");
+
+const aiText =
+    document.getElementById("aiText");
+
+const statusText =
+    document.getElementById("status");
+
+
+
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+
+
+/* =====================================================
+   BROWSER CHECK
+===================================================== */
+
+if (!SpeechRecognition) {
+
+    statusText.innerText =
+        "❌ Speech Recognition supported nahi hai.";
+
+    startBtn.disabled = true;
+
+    alert(
+        "Chrome browser use karo."
+    );
+
+}
+
+
+
+/* =====================================================
+   RECOGNITION OBJECT
+===================================================== */
+
+else {
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    recognition.lang = "hi-IN";
+
+
+    /*
+        Continuous false rakha hai.
+
+        Har sentence ke baad recognition
+        automatically restart hoga.
+
+        Ye browser mein zyada reliable hai.
+    */
+
+    recognition.continuous = false;
+
+
+    recognition.interimResults = true;
+
+
+    recognition.maxAlternatives = 1;
+
+
+
+    /* =================================================
+       VARIABLES
+    ================================================= */
+
+    let conversationActive = false;
+
+    let isListening = false;
+
+    let waitingForAI = false;
+
+    let restartTimer = null;
+
+
+
+    /* =================================================
+       START / STOP BUTTON
+    ================================================= */
+
+    startBtn.addEventListener(
+        "click",
+        function () {
+
+            /*
+                Agar conversation already running hai
+                to STOP karo.
+            */
+
+            if (conversationActive) {
+
+                stopConversation();
+
+            }
+
+            /*
+                Agar conversation running nahi hai
+                to START karo.
+            */
+
+            else {
+
+                startConversation();
+
+            }
+
+        }
+    );
+
+
+
+    /* =================================================
+       START CONVERSATION
+    ================================================= */
+
+    function startConversation() {
+
+        conversationActive = true;
+
+        waitingForAI = false;
+
+
+        startBtn.innerText =
+            "⏹️ Stop";
+
+
+        startBtn.classList.add(
+            "active"
+        );
+
+
+        statusText.innerText =
+            "🎤 Sun raha hoon... bolo";
+
+
+        userText.innerText =
+            "🎤 Bolo...";
+
+
+        aiText.innerText =
+            "—";
+
+
+        startListening();
+
+    }
+
+
+
+    /* =================================================
+       STOP CONVERSATION
+    ================================================= */
+
+    function stopConversation() {
+
+        conversationActive = false;
+
+        waitingForAI = false;
+
+
+        /*
+            Pending restart cancel
+        */
+
+        clearTimeout(
+            restartTimer
+        );
+
+
+        /*
+            AI voice stop
+        */
+
+        window.speechSynthesis.cancel();
+
+
+        /*
+            Microphone stop
+        */
+
+        if (isListening) {
+
+            try {
+
+                recognition.stop();
+
+            }
+
+            catch (error) {
+
+                console.log(
+                    "Stop error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        isListening = false;
+
+
+        startBtn.classList.remove(
+            "active"
+        );
+
+
+        startBtn.innerText =
+            "🎤 Start";
+
+
+        statusText.innerText =
+            "⏹️ Conversation stopped";
+
+    }
+
+
+
+    /* =================================================
+       START LISTENING
+    ================================================= */
+
+    function startListening() {
+
+        /*
+            Conversation stop hai
+            to kuch mat karo.
+        */
+
+        if (!conversationActive) {
+
+            return;
+
+        }
+
+
+        /*
+            AI response ka wait kar raha hai
+            to microphone start mat karo.
+        */
+
+        if (waitingForAI) {
+
+            return;
+
+        }
+
+
+        /*
+            Already listening hai
+            to dobara start mat karo.
+        */
+
+        if (isListening) {
+
+            return;
+
+        }
+
+
+        clearTimeout(
+            restartTimer
+        );
+
+
+        try {
+
+            recognition.start();
+
+        }
+
+        catch (error) {
+
+            console.log(
+                "Recognition start error:",
+                error
+            );
+
+
+            /*
+                Agar browser abhi bhi
+                recognition close kar raha ho
+                to thodi der baad retry karo.
+            */
+
+            restartTimer =
+                setTimeout(
+                    function () {
+
+                        startListening();
+
+                    },
+                    800
+                );
+
+        }
+
+    }
+
+
+
+    /* =================================================
+       RECOGNITION START
+    ================================================= */
+
+    recognition.onstart =
+        function () {
+
+            console.log(
+                "🎤 Recognition started"
+            );
+
+
+            isListening = true;
+
+
+            startBtn.classList.add(
+                "active"
+            );
+
+
+            statusText.innerText =
+                "🎤 Sun raha hoon... bolo";
+
+
+            userText.innerText =
+                "🎤 Sun raha hoon...";
+
+        };
+
+
+
+    /* =================================================
+       SPEECH START
+    ================================================= */
+
+    recognition.onspeechstart =
+        function () {
+
+            console.log(
+                "🗣️ Speech detected"
+            );
+
+
+            statusText.innerText =
+                "🗣️ Sun raha hoon...";
+
+        };
+
+
+
+    /* =================================================
+       SPEECH RESULT
+    ================================================= */
+
+    recognition.onresult =
+        function (event) {
+
+            console.log(
+                "Speech result:",
+                event
+            );
+
+
+            let finalText = "";
+
+            let interimText = "";
+
+
+            /*
+                Results collect karo
+            */
+
+            for (
+                let i = event.resultIndex;
+                i < event.results.length;
+                i++
+            ) {
+
+                const transcript =
+                    event.results[i][0].transcript;
+
+
+                if (
+                    event.results[i].isFinal
+                ) {
+
+                    finalText += transcript;
+
+                }
+
+                else {
+
+                    interimText += transcript;
+
+                }
+
+            }
+
+
+            /*
+                Screen par text show karo
+            */
+
+            if (finalText.trim()) {
+
+                userText.innerText =
+                    finalText.trim();
+
+            }
+
+            else if (interimText.trim()) {
+
+                userText.innerText =
+                    interimText.trim();
+
+            }
+
+
+
+            /* =========================================
+               FINAL RESULT
+            ========================================= */
+
+            if (
+                finalText.trim()
+            ) {
+
+                const message =
+                    finalText.trim();
+
+
+                console.log(
+                    "Final message:",
+                    message
+                );
+
+
+                /*
+                    Ab Gemini response ka wait hoga.
+
+                    Isliye microphone ko restart
+                    nahi karna hai.
+                */
+
+                waitingForAI = true;
+
+
+                statusText.innerText =
+                    "🤖 AI soch raha hai...";
+
+
+                /*
+                    Recognition stop
+                */
+
+                try {
+
+                    recognition.stop();
+
+                }
+
+                catch (error) {
+
+                    console.log(
+                        "Recognition stop:",
+                        error
+                    );
+
+                }
+
+
+                /*
+                    Django ko message send
+                */
+
+                sendToDjango(
+                    message
+                );
+
+            }
+
+        };
+
+
+
+    /* =================================================
+       RECOGNITION END
+    ================================================= */
+
+    recognition.onend =
+        function () {
+
+            console.log(
+                "🎤 Recognition ended"
+            );
+
+
+            isListening = false;
+
+
+            startBtn.classList.remove(
+                "active"
+            );
+
+
+            /*
+                IMPORTANT:
+
+                Agar AI response de raha hai
+                to microphone restart nahi hoga.
+
+                AI ke bolne ke baad restart hoga.
+            */
+
+            if (
+                conversationActive &&
+                !waitingForAI
+            ) {
+
+                scheduleListening(
+                    500
+                );
+
+            }
+
+        };
+
+
+
+    /* =================================================
+       RECOGNITION ERROR
+    ================================================= */
+
+    recognition.onerror =
+        function (event) {
+
+            console.error(
+                "Speech Recognition Error:",
+                event.error
+            );
+
+
+            isListening = false;
+
+
+            startBtn.classList.remove(
+                "active"
+            );
+
+
+            /*
+                User ne conversation stop
+                kar diya hai.
+            */
+
+            if (!conversationActive) {
+
+                return;
+
+            }
+
+
+
+            /* =========================================
+               NO SPEECH
+            ========================================= */
+
+            if (
+                event.error ===
+                "no-speech"
+            ) {
+
+                statusText.innerText =
+                    "🎤 Awaaz nahi mili... phir sun raha hoon";
+
+
+                /*
+                    Automatically retry
+                */
+
+                scheduleListening(
+                    700
+                );
+
+
+                return;
+
+            }
+
+
+
+            /* =========================================
+               NOT ALLOWED
+            ========================================= */
+
+            if (
+                event.error ===
+                "not-allowed"
+            ) {
+
+                conversationActive =
+                    false;
+
+
+                startBtn.innerText =
+                    "🎤 Start";
+
+
+                statusText.innerText =
+                    "❌ Microphone permission denied";
+
+
+                userText.innerText =
+                    "Chrome mein microphone Allow karo.";
+
+
+                return;
+
+            }
+
+
+
+            /* =========================================
+               MICROPHONE ERROR
+            ========================================= */
+
+            if (
+                event.error ===
+                "audio-capture"
+            ) {
+
+                statusText.innerText =
+                    "❌ Microphone nahi mil raha";
+
+
+                scheduleListening(
+                    1500
+                );
+
+
+                return;
+
+            }
+
+
+
+            /* =========================================
+               NETWORK ERROR
+            ========================================= */
+
+            if (
+                event.error ===
+                "network"
+            ) {
+
+                statusText.innerText =
+                    "🌐 Speech network error... retrying";
+
+
+                scheduleListening(
+                    1500
+                );
+
+
+                return;
+
+            }
+
+
+
+            /* =========================================
+               OTHER ERROR
+            ========================================= */
+
+            statusText.innerText =
+                "❌ Voice error: " +
+                event.error;
+
+
+            scheduleListening(
+                1500
+            );
+
+        };
+
+
+
+    /* =================================================
+       AUTOMATIC LISTENING SCHEDULER
+    ================================================= */
+
+    function scheduleListening(
+        delay = 500
+    ) {
+
+        clearTimeout(
+            restartTimer
+        );
+
+
+        restartTimer =
+            setTimeout(
+                function () {
+
+                    startListening();
+
+                },
+                delay
+            );
+
+    }
+
+
+
+    /* =================================================
+       SEND MESSAGE TO DJANGO
+    ================================================= */
+
+    window.sendToDjango =
+        function (text) {
+
+            console.log(
+                "📤 Sending to Django:",
+                text
+            );
+
+
+            waitingForAI = true;
+
+
+            statusText.innerText =
+                "🤖 Gemini se response aa raha hai...";
+
+
+            aiText.innerText =
+                "🤖 AI soch raha hai...";
+
+
+            fetch(
+                "/chat/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: text
+                    })
+                }
+            )
+
+            .then(
+                function (response) {
+
+                    console.log(
+                        "Django status:",
+                        response.status
+                    );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Server error: " +
+                            response.status
+                        );
+
+                    }
+
+
+                    return response.json();
+
+                }
+            )
+
+            .then(
+                function (data) {
+
+                    console.log(
+                        "Django response:",
+                        data
+                    );
+
+
+                    if (!data.success) {
+
+                        throw new Error(
+                            data.error ||
+                            "Gemini response error"
+                        );
+
+                    }
+
+
+                    const reply =
+                        data.reply;
+
+
+                    /*
+                        AI text show
+                    */
+
+                    aiText.innerText =
+                        reply;
+
+
+                    /*
+                        AI voice
+                    */
+
+                    speakHindi(
+                        reply
+                    );
+
+                }
+            )
+
+            .catch(
+                function (error) {
+
+                    console.error(
+                        "Chat error:",
+                        error
+                    );
+
+
+                    aiText.innerText =
+                        "❌ Error: " +
+                        error.message;
+
+
+                    statusText.innerText =
+                        "❌ AI response mein problem";
+
+
+                    /*
+                        Error ke baad bhi
+                        conversation continue karo.
+                    */
+
+                    waitingForAI = false;
+
+
+                    scheduleListening(
+                        1500
+                    );
+
+                }
+            );
+
+        };
+
+
+
+    /* =================================================
+       AI HINDI VOICE
+    ================================================= */
+
+    function speakHindi(text) {
+
+        console.log(
+            "🔊 AI speaking:",
+            text
+        );
+
+
+        /*
+            Purani speech cancel
+        */
+
+        window.speechSynthesis.cancel();
+
+
+        const speech =
+            new SpeechSynthesisUtterance(
+                text
+            );
+
+
+        /*
+            Hindi
+        */
+
+        speech.lang =
+            "hi-IN";
+
+
+        /*
+            Speed
+        */
+
+        speech.rate =
+            1;
+
+
+        /*
+            Voice pitch
+        */
+
+        speech.pitch =
+            1;
+
+
+        /*
+            Volume
+        */
+
+        speech.volume =
+            1;
+
+
+
+        /* =============================================
+           AI VOICE START
+        ============================================= */
+
+        speech.onstart =
+            function () {
+
+                console.log(
+                    "🔊 AI voice started"
+                );
+
+
+                statusText.innerText =
+                    "🔊 AI bol raha hai...";
+
+            };
+
+
+
+        /* =============================================
+           AI VOICE END
+        ============================================= */
+
+        speech.onend =
+            function () {
+
+                console.log(
+                    "🔊 AI voice ended"
+                );
+
+
+                /*
+                    Agar user ne Stop nahi kiya
+                    hai to automatically listening.
+                */
+
+                if (
+                    conversationActive
+                ) {
+
+                    waitingForAI =
+                        false;
+
+
+                    statusText.innerText =
+                        "🎤 Ab bolo...";
+
+
+                    /*
+                        Automatically microphone start
+                    */
+
+                    scheduleListening(
+                        500
+                    );
+
+                }
+
+            };
+
+
+
+        /* =============================================
+           AI VOICE ERROR
+        ============================================= */
+
+        speech.onerror =
+            function (event) {
+
+                console.error(
+                    "Speech synthesis error:",
+                    event
+                );
+
+
+                /*
+                    Voice error ke baad bhi
+                    conversation continue.
+                */
+
+                if (
+                    conversationActive
+                ) {
+
+                    waitingForAI =
+                        false;
+
+
+                    scheduleListening(
+                        500
+                    );
+
+                }
+
+            };
+
+
+
+        /*
+            AI voice start
+        */
+
+        window.speechSynthesis.speak(
+            speech
+        );
+
+    }
+
+
+
+    /* =================================================
+       CLEAR CHAT
+    ================================================= */
+
+    window.clearChat =
+        function () {
+
+            userText.innerText =
+                "—";
+
+
+            aiText.innerText =
+                "—";
+
+
+            statusText.innerText =
+                conversationActive
+                    ? "🎤 Sun raha hoon..."
+                    : "Start button dabao aur baat karo";
+
+
+            /*
+                AI voice clear
+            */
+
+            window.speechSynthesis.cancel();
+
+        };
+
+}
+
+</script>
+
+
+</body>
+
+</html>

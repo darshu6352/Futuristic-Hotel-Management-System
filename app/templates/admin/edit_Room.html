@@ -1,0 +1,31 @@
+
+{% block body %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input type="text" placeholder="name" name="name" value="{{ doctor.room_number }}">
+    <input type="text" placeholder="Roomtype" name="phone" value="{{ doctor.Roomtype }}">
+    <input type="text" placeholder="Price" name="timing" value="{{ doctor.Price }}">
+    <input type="text" placeholder="address" name="hospital" value="{{ doctor.address }}">
+
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">Main Image</label>
+            <input class="form-control" type="file" name="image" accept="image/*" required>
+        </div>
+
+        <!-- IMAGE 2 -->
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">Image 2</label>
+            <input class="form-control" type="file" name="image2" accept="image/*">
+        </div>
+
+        <!-- IMAGE 3 -->
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">Image 3</label>
+            <input class="form-control" type="file" name="image3" accept="image/*">
+        </div>
+        <input type="file" name="img">
+
+    <button type="submit">Update</button>
+</form>
+{% endblock body%}
