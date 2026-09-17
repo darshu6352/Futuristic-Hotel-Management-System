@@ -4,5 +4,10 @@ db.sqlite3
 .env
 venv/
 .venv/
+.venv-1/
+.venv-2/
+.venv-3/
 media/
 staticfiles/
+.vscode/
+.idea/
